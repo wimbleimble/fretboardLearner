@@ -1,9 +1,6 @@
 TO DO LIST:
 
--> Modes:
-    -> Endless
-    -> Custom
-    -> Standard
-
+-> tabs at the top of the screen: how to use, settings, 
 -> Play a sound everytime a fret comes on
 -> High and low notes for notes 12fret and up
+-> Display note name, stave, or both.
