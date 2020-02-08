@@ -1,8 +1,9 @@
+/*----------------------> GLOBAL VARIABLES <----------------------*/
 const notes = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
 const gameModes = ["Standard", "Endless"];
+let currentDelay; //bad practice
 
-
-//DOM functions for ease in creating menu and game display.
+/*----------------------> DOM FUNCTIONS <----------------------*/
 function createDiv(cls)
 {
 	let div = document.createElement("div");
@@ -53,8 +54,7 @@ function createSelect(options)
 }
 
 
-
-//Drawing functions that draw the different state of the game and return relevent elements
+/*----------------------> UI DRAWING FUNCTIONS <----------------------*/
 function drawMenu()
 {
 	document.body.innerHTML = "";
@@ -159,15 +159,28 @@ function drawGame()
 		endButton: endButton
 	}
 }
+/*----------------------> GENERAL FUNCTIONS <----------------------*/
+//very functional. much wow. (update 08/02/2020: no longer very function. none wow :-( ))
 
-//general purpose functions. very functional. much wow.
-
+//returns a promise that resolves after t ms. Also writes promise to currentDelay so it can be canceled from anywhere.
+//just dont have more than one running at once i guess???
 function delay(t)
 {
-	return new Promise(resolve =>
+	let timer;
+	let res;
+	let p = new Promise((resolve) =>
+		{
+			timer = setTimeout(resolve, t);
+			res = resolve;
+			
+		});
+	p.cancel = () =>
 	{
-		setTimeout(resolve, t);
-	})
+		clearTimeout(timer);
+		res();
+	}
+	currentDelay = p;
+	return p;
 }
 
 //Fisher-Yates array shuffle, its like a dance but not.
@@ -183,7 +196,7 @@ function shuffle(ar)
 	return ar;
 }
 
-//Execution functions which draw states and handle behaviour.
+/*----------------------> MAIN EXECUTION FUNCTIONS <----------------------*/
 function startMenu()
 {
 	let menuInputs = drawMenu();
@@ -214,13 +227,18 @@ async function launch(inputs)
 	startGame(inputs.minFret, inputs.maxFret, inputs.time, inputs.baseNote, inputs.gameMode);
 }
 
+
+
 async function startGame(minFret, maxFret, time, baseNote, gameMode)
 {
 	//begin actual game
 	let gameElements = drawGame();
+	let halt = false; //when variable = true, game stops.
+
 	gameElements.endButton.onclick = () =>
 	{
-		startMenu();
+		halt = true;
+		currentDelay.cancel();
 	}
 
 	//create an array with each fret in selected range in ascending order contained in it
@@ -235,25 +253,28 @@ async function startGame(minFret, maxFret, time, baseNote, gameMode)
 	do
 	{
 		frets = shuffle(frets);
+		console.log(frets);
 		
 		//note forEach not used to iterate because await is needed.
 		for (let i = 0; i < frets.length; i++)
 		{
-			console.log("Round " + (i+1));
 			let note = (frets[i] + baseNote) % 12;
 			gameElements.noteContainer.innerHTML = notes[note];
+			if(halt){break;}
 			await delay(time * 1000);
+			if(halt){break;}
 			gameElements.fretContainer.innerHTML = frets[i];
 			await delay(3000);
+			if(halt){break;}
 			gameElements.noteContainer.innerHTML = "";
 			gameElements.fretContainer.innerHTML = "";
 		}
 
-	} while(gameMode == 1);
+	} while(gameMode == 1 && !halt);
 
 	//game has ended, return to menu.
 	startMenu();
 }
 
-//startMenu() called to initialise menu state upon launch.
+/*----------------------> ENTRY POINT <----------------------*/
 startMenu();
