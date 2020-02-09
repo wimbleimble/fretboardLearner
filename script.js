@@ -58,7 +58,15 @@ function createSelect(options)
 function drawMenu()
 {
 	document.body.innerHTML = "";
+
+	//create master container that contains settings/help and tabs
+	let masterContainer = createDiv("masterContainer");
+
 	let row1 = createDiv("box")
+
+	//create settings content
+	let settingsCont = createSpan("tabContent");
+	settingsCont.classList.add("activeCont");
 	let rangeDiv = createDiv("fillWidth");
 	let rangeLbl = createSpan("label");
 	let timeDiv = createDiv("fillWidth");
@@ -85,14 +93,45 @@ function drawMenu()
 	gameModeLbl.innerHTML = "Gamemode: "
 	gameModeDiv.appendChild(gameModeLbl);
 	gameModeDiv.appendChild(gameModeInput);
-	row1.appendChild(rangeDiv);
-	row1.appendChild(timeDiv);
-	row1.appendChild(tuningDiv);
-	row1.appendChild(gameModeDiv);
+	settingsCont.appendChild(rangeDiv);
+	settingsCont.appendChild(timeDiv);
+	settingsCont.appendChild(tuningDiv);
+	settingsCont.appendChild(gameModeDiv);
+
+	//create help screen
+	let helpCont = createSpan("tabContent");
+	helpCont.classList.add("help")
+	helpCont.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Press go, and a note name will appear on screen." 
+						+ " Play the corresponing note on the selected string, "
+						+ "and shortly after the correct fret will display and "
+						+ " the note will play. Then a new note will be displayed. "
+						+ "Use the settings to change the string you want to focus on, "
+						+ "and the time between notes. </br>&nbsp;&nbsp;&nbsp;&nbsp;The 'normal' gamemode goes"
+						+ " through each note on the strings in the fret"
+						+ " range in turn, whereas endless mode will play until you say stop."
+
+	//Bundling tab dialogues into row 1 and appending
+	row1.appendChild(settingsCont);
+	row1.appendChild(helpCont);
+	masterContainer.appendChild(row1);
+
+	//Create tab dialogue.
+	let tabContainer = createDiv("tabContainer");
+	let settingsTab = createButton("Settings");
+	let helpTab = createButton("Help");
+	settingsTab.classList.add("tab", "active");
+	helpTab.classList.add("tab");
+	tabContainer.appendChild(settingsTab);
+	tabContainer.appendChild(helpTab);
+	masterContainer.appendChild(tabContainer);
+
+	//create Go button.
 	let row2 = createDiv("box");
 	let goButton = createButton("GO");
-	row2.appendChild(goButton);
-	document.body.appendChild(row1);
+	row2.appendChild(goButton);	
+
+	//append everything to body.
+	document.body.appendChild(masterContainer);
 	document.body.appendChild(row2);
 	return {
 		minFretInput: minFretInput,
@@ -100,7 +139,9 @@ function drawMenu()
 		timeInput: timeInput,
 		startNoteInput: startNoteInput,
 		gameModeInput: gameModeInput,
-		goButton: goButton
+		goButton: goButton,
+		tabs: tabContainer.childNodes,
+		tabContent: row1.childNodes
 	};
 }
 
@@ -121,7 +162,10 @@ function drawCountdown()
 function drawGame()
 {
 	document.body.innerHTML = "";
+
+	//create note display dialoge
 	let noteRow = createDiv("box");
+	noteRow.classList.add("margin5px");
 	let noteLabel = createSpan("label");
 	let noteContainer = createDiv("circle");
 	let noteSpan = createSpan();
@@ -134,7 +178,9 @@ function drawGame()
 
 	document.body.appendChild(noteRow);
 
+	//create fret display dialogue
 	let fretRow = createDiv("box");
+	fretRow.classList.add("margin5px");
 	let fretLabel = createSpan("label");
 	let fretContainer = createDiv("circle");
 	let fretSpan = createSpan();
@@ -147,7 +193,10 @@ function drawGame()
 
 	document.body.appendChild(fretRow);
 
+	//endButton creation
 	let buttonRow = createDiv("box");
+	buttonRow.classList.add("margin5px");
+	
 	let endButton = createButton("End");
 	buttonRow.appendChild(endButton)
 
@@ -196,6 +245,21 @@ function shuffle(ar)
 	return ar;
 }
 
+//swaps the active tab and active content
+function swapTab(index, tabs, content)
+{
+	tabs.forEach(t =>
+	{
+		t.classList.remove("active");
+	});
+	content.forEach(t =>
+	{
+		t.classList.remove("activeCont");
+	})
+	tabs[index].classList.add("active");
+	content[index].classList.add("activeCont");
+}
+
 /*----------------------> MAIN EXECUTION FUNCTIONS <----------------------*/
 function startMenu()
 {
@@ -213,6 +277,16 @@ function startMenu()
 		};
 		launch(inputs);
 	}
+	menuInputs.tabs.forEach((t, i) =>
+	{
+		t.onclick = () =>
+		{
+			if(!t.classList.contains("active"))
+			{
+				swapTab(i, menuInputs.tabs, menuInputs.tabContent);
+			}
+		}
+	});
 }
 
 async function launch(inputs)
