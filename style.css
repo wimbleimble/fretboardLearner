@@ -9,7 +9,7 @@ body, html
     background-color: white;
     width: 100vw;
     height: 100vh;
-    font-size: xx-large;
+    font-size: x-large;
     font-family: 'Montserrat', sans-serif;
     color: white;
 }
@@ -18,14 +18,6 @@ body, html
 {
     margin: 5px;
     flex-direction: column-reverse;
-}
-
-@media only screen and (max-width: 380px)
-{
-    body, html
-    {
-        font-size: x-large;
-    }
 }
 
 div
@@ -50,6 +42,7 @@ div
 }
 .fillWidth
 {
+    display: flex;
     width: 100%;
 }
 .clm
@@ -83,10 +76,7 @@ button:focus
 {
     outline: 0;
 }
-.h
-{
-    flex-direction: row;
-}
+
 .circle
 {
     display: flex;
@@ -153,11 +143,6 @@ button:focus
 {
     display: none;
 }
-.activeCont
-{
-    display: flex;
-    flex-direction: column;
-}
 .help
 {
     padding: 8px;
@@ -166,4 +151,95 @@ button:focus
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+}
+.sub
+{
+    width: 100%;
+    background-color: #404040;
+    border-top-left-radius: 19.6px;
+    border-top-right-radius: 19.6px;
+    padding-top: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.subTabContainer
+{
+    flex-grow: 1;
+    display: flex;
+    justify-content: left;
+    padding-left: 20px;
+    padding-right: 20px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.subTabContents
+{
+    display: none;
+    width: 100%;
+    border-radius: 20px;
+    background-color: grey;
+    font-size: small;
+    padding: 8px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    
+}
+.subTabMasterContainer
+{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    background-color: #404040;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 8px;
+}
+.flx-btm
+{
+    align-items: flex-end;
+}
+.flx-end
+{
+    justify-content: flex-end;
+    padding: 0px;
+    padding-right: 20px;
+}
+.activeCont
+{
+    display: flex;
+    flex-direction: column;
+}
+.smallText
+{
+    font-size: small;
+}
+.h
+{
+    flex-direction: row;
+}
+
+@media only screen and (max-width: 420px)
+{
+    body, html
+    {
+        font-size: large;
+    }
+    button, input, select
+    {
+        font-size: small;
+    }
+}
+@media only screen and (max-width: 375px)
+{
+    .h
+    {
+        flex-direction: column;
+    }
 }
